@@ -1,0 +1,2 @@
+# Sympp
+Symbolic Cpp library
