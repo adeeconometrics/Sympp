@@ -2,10 +2,11 @@
 
 
 Sympp: A Symbolic Cpp Library 
+
 <p lign="center">
   <img src="img/SymppLogo.jpg" alt="Image">
 </p>
-a
+
 ## Motivation, Goals, and Disclaimers
 
 This personal project aims to explore ideas on symbolic programming and how to implement
