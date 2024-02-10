@@ -9,6 +9,9 @@ struct Term {
   int exponent{};
 };
 
+// todo
+// - [ ] rules for multiply and divide
+// - [ ] power and exponentials
 auto simplify(std::vector<Term> &t_expr) -> std::vector<Term> {
   std::vector<Term> simplified;
   std::sort(t_expr.begin(), t_expr.end(),
@@ -17,7 +20,7 @@ auto simplify(std::vector<Term> &t_expr) -> std::vector<Term> {
             });
 
   // combine like terms
-  for (const auto &term : t_expr) {
+  for (const Term &term : t_expr) {
     if (simplified.empty() || term.exponent != simplified.back().exponent) {
       simplified.emplace_back(term);
     } else {

@@ -8,6 +8,12 @@
 #include <string>
 #include <vector>
 
+// todo
+// - [ ] relational ops
+// - [ ] div
+// - [ ] integral sign
+// - [ ] make generic big int
+// - [ ] overload for integer functions
 class Int {
 public:
   Int() = default;
