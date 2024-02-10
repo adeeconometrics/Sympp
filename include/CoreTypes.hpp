@@ -121,7 +121,7 @@ public:
     Int result;
     int remainder = 0;
     for (std::size_t i = num.size() - 1; i >= 0; --i) {
-      int dividend = remainder * 10 + num[i];
+      int dividend = remainder * base + num[i];
       result.num.emplace_back(dividend / x);
       remainder = dividend % x;
     }
