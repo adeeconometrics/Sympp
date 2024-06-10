@@ -4,6 +4,10 @@
 #include <iostream>
 #include <string>
 
+template <typename Expr>
+auto parse(Expr t_expr) -> std::string {
+  return Parser<Expr>::parse(t_expr);
+}
 auto main() -> int {
   // Int a("12345678901234567890");
   // Int b("98765432109876543210");
@@ -21,5 +25,6 @@ auto main() -> int {
   Sym z("z");
 
   auto expr = x + y * z;
-  std::cout << Parser<decltype(expr)>::parse(expr) << std::endl;
+  std::cout << parse(expr) << std::endl;
+  // std::cout << Parser<decltype(expr)>::parse(expr) << std::endl;
 }
