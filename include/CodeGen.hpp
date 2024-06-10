@@ -34,7 +34,7 @@ template <typename Expr> struct Parser {
 template <typename Op, typename Lhs, typename Rhs>
 struct Parser<BinaryExpr<Op, Lhs, Rhs>> {
   static std::string parse(const BinaryExpr<Op, Lhs, Rhs> &expr) {
-    return Parser<Lhs>::parse(expr.lhs) + " " + Op::symbol.get_name() + " " +
+    return Parser<Lhs>::parse(expr.lhs) + " " + Op::get_name() + " " +
            Parser<Rhs>::parse(expr.rhs);
   }
 };
@@ -59,14 +59,5 @@ template <typename Op, typename Arg> struct Parser<UnaryExpr<Op, Arg>> {
 template <> struct Parser<Sym> {
   static std::string parse(const Sym &symbol) { return symbol.get_name(); }
 };
-
-// template <typename T, std::size_t Rows, std::size_t Cols>
-// struct Parser<Matrix<T, Rows, Cols>> {
-//   static std::string parse(const Matrix<T, Rows, Cols> &matrix) {
-//     return Matrix<T, Rows, Cols>::parse(matrix);
-//   }
-// };
-
-// implement parser
 
 #endif // __LAZYPARSER_H__

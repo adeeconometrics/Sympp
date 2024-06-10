@@ -5,7 +5,7 @@ template <typename Ops, typename Lhs, typename Rhs> struct BinaryExpr {
 
   BinaryExpr(const Lhs &lhs, const Rhs &rhs) : lhs(lhs), rhs(rhs) {}
 
-private:
+// private:
   Lhs lhs;
   Rhs rhs;
   Ops ops;
@@ -15,7 +15,7 @@ template <typename Op, typename Arg> struct UnaryExpr {
 
   UnaryExpr(const Arg &arg) : arg(arg) {}
 
-private:
+// private:
   Arg arg;
   Op ops;
 };
