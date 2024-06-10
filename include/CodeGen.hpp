@@ -47,7 +47,7 @@ struct Parser<BinaryExpr<Op, Lhs, Rhs>> {
  */
 template <typename Op, typename Arg> struct Parser<UnaryExpr<Op, Arg>> {
   static std::string parse(const UnaryExpr<Op, Arg> &expr) {
-    return Op::symbol.get_name() + "(" + Parser<Arg>::parse(expr.arg) + ")";
+    return Op::get_name() + "(" + Parser<Arg>::parse(expr.arg) + ")";
   }
 };
 

@@ -40,4 +40,23 @@ template <typename Lhs, typename Rhs>
 auto operator/(const Lhs &lhs, const Rhs &rhs) -> BinaryExpr<DivOp, Lhs, Rhs> {
   return BinaryExpr<DivOp, Lhs, Rhs>(lhs, rhs);
 }
+
+struct NegOp {
+  static auto get_name() -> const std::string { return "-"; }
+};
+
+template <typename Arg>
+auto operator-(const Arg &arg) -> UnaryExpr<NegOp, Arg> {
+  return UnaryExpr<NegOp, Arg>(arg);
+}
+
+struct SinOp {
+  static auto get_name() -> const std::string { return "sin"; }
+};
+
+template <typename Arg>
+auto sin(const Arg &arg) -> UnaryExpr<SinOp, Arg> {
+  return UnaryExpr<SinOp, Arg>(arg);
+}
+
 #endif // __COREOPS_H__

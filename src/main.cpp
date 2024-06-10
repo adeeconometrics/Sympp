@@ -24,7 +24,7 @@ auto main() -> int {
   Sym y("y");
   Sym z("z");
 
-  auto expr = x + y * z;
+  auto expr = x + y * sin(z);
   std::cout << parse(expr) << std::endl;
   // std::cout << Parser<decltype(expr)>::parse(expr) << std::endl;
 }
