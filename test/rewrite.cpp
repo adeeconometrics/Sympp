@@ -6,6 +6,19 @@ template <typename Ops, typename Lhs, typename Rhs> struct BinaryExpr {
 
   BinaryExpr(const Lhs &lhs, const Rhs &rhs) : lhs(lhs), rhs(rhs), ops(Ops(lhs, rhs)) {}
 
+
+  auto simp() const {
+    auto lhs_simp = lhs.simp();
+    auto rhs_simp = rhs.simp();
+    
+    return BinaryExpr<Ops, Lhs, Rhs>(lhs_simp, rhs_simp);
+  }
+
+  friend bool operator!=(const BinaryExpr &lhs, const BinaryExpr &rhs) {
+    // Implement your comparison logic here
+    // For example, you might compare the operands and the operation
+    return !(lhs.ops == rhs.ops && lhs.lhs == rhs.lhs && lhs.rhs == rhs.rhs);
+  }
   Lhs lhs;
   Rhs rhs;
   Ops ops;
@@ -14,6 +27,11 @@ template <typename Ops, typename Lhs, typename Rhs> struct BinaryExpr {
 template <typename Op, typename Arg> struct UnaryExpr {
 
   UnaryExpr(const Arg &arg) : arg(arg), ops(Op(arg)) {}
+
+  auto simp() const {
+    auto arg_simp = arg.simp();
+    return UnaryExpr<Op, Arg>(arg_simp);
+  }
 
   Arg arg;
   Op ops;
@@ -32,7 +50,7 @@ template <typename Derived> struct Expr {
 struct Sym : Expr<Sym> {
   constexpr Sym(const char* name) : name(name) {}
   constexpr auto expand() -> Sym const { return *this; }
-  constexpr auto simp() -> Sym const { return *this; }
+  constexpr auto simp() const -> Sym const { return *this; }
   constexpr auto get_name() const -> const char* { return name; }
   static auto parse(const Sym &sym) -> std::string { return static_cast<std::string>(sym.get_name()); }
 private:
