@@ -110,36 +110,59 @@ def parse(tokens:List[Tuple[str,str]]) -> str:
 
 
 def simplify(node: Node) -> Node:
-    if isinstance(node, (AndNode, OrNode)):
+    if isinstance(node, VarNode):
+        return node
+
+    if isinstance(node, NotNode):
+        operand = simplify(node.operand)
+
+        # Double negation: not(not(A)) -> A
+        if isinstance(operand, NotNode):
+            return simplify(operand.operand)
+
+        # Apply De Morgan's laws
+        if isinstance(operand, AndNode):
+            return OrNode(simplify(NotNode(operand.left)), simplify(NotNode(operand.right)))
+        if isinstance(operand, OrNode):
+            return AndNode(simplify(NotNode(operand.left)), simplify(NotNode(operand.right)))
+
+        return NotNode(operand)
+
+    if isinstance(node, AndNode):
         left = simplify(node.left)
         right = simplify(node.right)
 
-        if isinstance(left, VarNode) and isinstance(right, VarNode):
-            return node.__class__(left, right)
-        elif isinstance(left, VarNode) and isinstance(right, NotNode) and isinstance(right.operand, VarNode):
-            if left.name == right.operand.name:
-                return node.__class__(left, right.operand)
-        elif isinstance(left, NotNode) and isinstance(left.operand, VarNode) and isinstance(right, VarNode):
-            if left.operand.name == right.name:
-                return node.__class__(left.operand, right)
-        elif isinstance(left, NotNode) and isinstance(right, NotNode) and isinstance(left.operand, VarNode) and isinstance(right.operand, VarNode):
-            if left.operand.name == right.operand.name:
-                return node.__class__(left.operand, right.operand)
+        # Apply distributive law if applicable
+        if isinstance(left, OrNode):
+            return AndNode(simplify(OrNode(left.left, right)), simplify(OrNode(left.right, right)))
+        if isinstance(right, OrNode):
+            return AndNode(simplify(OrNode(left, right.left)), simplify(OrNode(left, right.right)))
 
-    elif isinstance(node, NotNode):
-        operand = simplify(node.operand)
-        if isinstance(operand, VarNode):
-            return NotNode(operand)
+        return AndNode(left, right)
 
-    return node
+    if isinstance(node, OrNode):
+        left = simplify(node.left)
+        right = simplify(node.right)
 
+        # Apply distributive law if applicable
+        if isinstance(left, AndNode):
+            return OrNode(simplify(AndNode(left.left, right)), simplify(AndNode(left.right, right)))
+        if isinstance(right, AndNode):
+            return OrNode(simplify(AndNode(left, right.left)), simplify(AndNode(left, right.right)))
+
+        return OrNode(left, right)
+
+    raise ValueError(f'Unknown node type {type(node)}')
 
 if __name__ == '__main__':
     exprs_to_simplify = [
-        "a && b",
-        "a && !b",
-        "!a && b",
-        "!a && !b",
+        "!!A",
+        "!(A && B)",
+        "!A && !B",
+        "!(!(X && Y))",
+        "!(!P || !Q)",
+        "!(A && B) || !(C && D)",
+        "((!A || !B) || (!C || !D))"
     ]
 
     for expr in exprs_to_simplify:
