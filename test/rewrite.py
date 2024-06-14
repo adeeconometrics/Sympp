@@ -109,57 +109,42 @@ def parse(tokens:List[Tuple[str,str]]) -> str:
     return ast
 
 
-
-def simplify(node:Node) -> Node:
-    if isinstance(node, AndNode):
+def simplify(node: Node) -> Node:
+    if isinstance(node, (AndNode, OrNode)):
         left = simplify(node.left)
         right = simplify(node.right)
 
         if isinstance(left, VarNode) and isinstance(right, VarNode):
-            return AndNode(left, right)
-        elif isinstance(left, VarNode) and isinstance(right, NotNode):
+            return node.__class__(left, right)
+        elif isinstance(left, VarNode) and isinstance(right, NotNode) and isinstance(right.operand, VarNode):
             if left.name == right.operand.name:
-                return AndNode(left, right.operand)
-        elif isinstance(left, NotNode) and isinstance(right, VarNode):
+                return node.__class__(left, right.operand)
+        elif isinstance(left, NotNode) and isinstance(left.operand, VarNode) and isinstance(right, VarNode):
             if left.operand.name == right.name:
-                return AndNode(left.operand, right)
-        elif isinstance(left, NotNode) and isinstance(right, NotNode):
+                return node.__class__(left.operand, right)
+        elif isinstance(left, NotNode) and isinstance(right, NotNode) and isinstance(left.operand, VarNode) and isinstance(right.operand, VarNode):
             if left.operand.name == right.operand.name:
-                return AndNode(left.operand, right.operand)
-
-    elif isinstance(node, OrNode):
-        left = simplify(node.left)
-        right = simplify(node.right)
-
-        if isinstance(left, VarNode) and isinstance(right, VarNode):
-            return OrNode(left, right)
-        elif isinstance(left, VarNode) and isinstance(right, NotNode):
-            if left.name == right.operand.name:
-                return OrNode(left, right.operand)
-        elif isinstance(left, NotNode) and isinstance(right, VarNode):
-            if left.operand.name == right.name:
-                return OrNode(left.operand, right)
-        elif isinstance(left, NotNode) and isinstance(right, NotNode):
-            if left.operand.name == right.operand.name:
-                return OrNode(left.operand, right.operand)
+                return node.__class__(left.operand, right.operand)
 
     elif isinstance(node, NotNode):
         operand = simplify(node.operand)
-        if isinstance(operand, NotNode):
-            return operand.operand
-        return NotNode(operand)
+        if isinstance(operand, VarNode):
+            return NotNode(operand)
 
     return node
 
 
-
 if __name__ == '__main__':
-    expression = "A && !(B || A)"
-    tokens = tokenize(expression)
-    print(tokens)
+    exprs_to_simplify = [
+        "a && b",
+        "a && !b",
+        "!a && b",
+        "!a && !b",
+    ]
 
-    ast = parse(tokens)
-    print(ast)
-
-    simplified_ast = simplify(ast)
-    print(simplified_ast)
+    for expr in exprs_to_simplify:
+        tokens = tokenize(expr)
+        ast = parse(tokens)
+        print(f'Original: {expr}')
+        print(f'Simplified: {simplify(ast)}')
+        print()
